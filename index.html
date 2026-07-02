@@ -68,7 +68,6 @@
             <button onclick="resetSlot('slot-morning')" class="flex-1 py-1.5 text-xs bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-bold">リセット</button>
           </div>
         </div>
-        </div>
         <div class="border-2 border-emerald-100 rounded-3xl p-6">
           <div class="flex items-center gap-3 mb-4"><span class="text-3xl">🍱</span><span class="font-bold text-xl">昼食</span></div>
           <div id="slot-noon" class="meal-slot border-2 border-dashed border-emerald-200 rounded-3xl p-4" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
@@ -84,6 +83,7 @@
             <button onclick="eat('slot-evening')" class="flex-1 py-1.5 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold">食べた</button>
             <button onclick="resetSlot('slot-evening')" class="flex-1 py-1.5 text-xs bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-bold">リセット</button>
           </div>
+        </div>
         </div>
       </div>
     </div>
@@ -233,7 +233,7 @@
     function drop(e) {
       e.preventDefault();
       e.currentTarget.classList.remove('drag-over');
-      const data = e.dataTransfer.getData("text/html");
+      const data = e.dataTransfer.getData("text/plain");
       if (data) {
         const temp = document.createElement('div');
         temp.innerHTML = data;
