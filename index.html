@@ -53,6 +53,15 @@
         <button onclick="createRecipeCard('freezer')" class="flex-1 py-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-3xl">🧊 冷凍庫に保存</button>
       </div>
     </div>
+    
+      <div class="max-w-7xl mx-auto p-4 mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="storage-box rounded-3xl p-5" id="shared-fridge">
+      <div class="font-bold text-sky-600 mb-3"><i class="fa-solid fa-box"></i> 冷蔵庫</div>
+    </div>
+    <div class="storage-box rounded-3xl p-5" id="shared-freezer">
+      <div class="font-bold text-sky-600 mb-3"><i class="fa-solid fa-snowflake"></i> 冷凍庫</div>
+    </div>
+  </div>
 
    <!-- 献立作成 -->
     <div id="menu-section" class="section bg-white rounded-3xl shadow-xl p-8 border">
@@ -247,11 +256,9 @@
     function drop(e) {
       e.preventDefault();
       e.currentTarget.classList.remove('drag-over');
-      const data = e.dataTransfer.getData("text/plain");
-      if (data) {
-        const temp = document.createElement('div');
-        temp.innerHTML = data;
-        const card = temp.firstElementChild;
+
+      const cardId =e.dataTransfer.getData("text/plain");
+      const card = document.getElementById(cardId);
         if (card) e.currentTarget.appendChild(card);
       }
     }
