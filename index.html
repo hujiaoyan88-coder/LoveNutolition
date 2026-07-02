@@ -14,7 +14,7 @@
     .section { display: none; }
     .section.active { display: block; }
     .day-tab.active { background-color: #166534; color: white; font-weight: 700; }
-    .storage-box { border: 3px solid #bae6fd; background: #f0f9ff; }
+    .storage-box { border: 3px solid #bae6fd; background: #f0f9ff; min-height: 180px; }
     .suggestions { max-height: 200px; overflow-y: auto; background: white; border: 1px solid #ddd; border-radius: 8px; position: absolute; z-index: 50; width: 100%; }
   </style>
 </head>
@@ -51,79 +51,69 @@
         <button onclick="createRecipeCard('fridge')" class="flex-1 py-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-3xl">❄️ 冷蔵庫に保存</button>
         <button onclick="createRecipeCard('freezer')" class="flex-1 py-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-3xl">🧊 冷凍庫に保存</button>
       </div>
-    
-    
-  <!-- 冷蔵庫・冷凍庫 -->
-  <div class="max-w-7xl mx-auto p-4 mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div class="storage-box rounded-3xl p-5" class="shared-fridge">
-      <div class="font-bold text-sky-600 mb-3"><i class="fa-solid fa-box"></i> 冷蔵庫</div>
-    </div>
-    <div class="storage-box rounded-3xl p-5" class="shared-freezer">
-      <div class="font-bold text-sky-600 mb-3"><i class="fa-solid fa-snowflake"></i> 冷凍庫</div>
-    </div>
-  </div>
-</div>
-   <!-- 献立作成 -->
-    <div id="menu-section" class="section bg-white rounded-3xl shadow-xl p-8 border">
-      <h2 class="text-2xl font-bold mb-6">📅 献立作成</h2>
-      
-      <!-- 日タブ -->
-      <div class="flex gap-2 mb-6 overflow-x-auto pb-2" id="day-tabs"></div>
-      <div id="current-day-header" class="text-3xl font-bold text-emerald-700 mb-6">月</div>
 
-      <!-- 食事スロット -->
+      <!-- レシピ作成エリア直下の冷蔵庫・冷凍庫 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+        <div class="storage-box rounded-3xl p-5" id="recipe-fridge">
+          <div class="font-bold text-sky-600 mb-3"><i class="fa-solid fa-box"></i> 冷蔵庫</div>
+        </div>
+        <div class="storage-box rounded-3xl p-5" id="recipe-freezer">
+          <div class="font-bold text-sky-600 mb-3"><i class="fa-solid fa-snowflake"></i> 冷凍庫</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 献立作成 -->
+    <div id="menu-section" class="section bg-white rounded-3xl shadow p-8">
+      <h2 class="text-2xl font-bold mb-6">📅 献立作成</h2>
+      <div class="flex gap-2 mb-6 overflow-x-auto pb-2" id="day-tabs"></div>
+      <div id="current-day-header" class="text-3xl font-bold text-emerald-700 mb-6"></div>
+
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white border-2 border-emerald-100 rounded-3xl p-5">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="text-3xl">☀️</span>
-            <span class="font-bold text-xl">朝</span>
-          </div>
+        <div class="border-2 border-emerald-100 rounded-3xl p-6">
+          <div class="flex items-center gap-3 mb-4"><span class="text-3xl">☀️</span><span class="font-bold text-xl">朝食</span></div>
           <div id="slot-morning" class="meal-slot border-2 border-dashed border-emerald-200 rounded-3xl p-4" 
-     ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></div>
-          <div class="flex gap-3 mt-4">
+               ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></div>
+          <div class="mt-4 flex gap-3">
             <button onclick="eat('slot-morning')" class="flex-1 py-3 bg-blue-600 text-white rounded-2xl font-bold">食べた</button>
             <button onclick="resetSlot('slot-morning')" class="flex-1 py-3 bg-gray-500 text-white rounded-2xl font-bold">リセット</button>
           </div>
         </div>
-        
-        <div class="bg-white border-2 border-emerald-100 rounded-3xl p-5">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="text-3xl">🍱</span>
-            <span class="font-bold text-xl">昼</span>
-          </div>
+
+        <div class="border-2 border-emerald-100 rounded-3xl p-6">
+          <div class="flex items-center gap-3 mb-4"><span class="text-3xl">🍱</span><span class="font-bold text-xl">昼食</span></div>
           <div id="slot-noon" class="meal-slot border-2 border-dashed border-emerald-200 rounded-3xl p-4" 
-     ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></div>
-          <div class="flex gap-3 mt-4">
+               ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></div>
+          <div class="mt-4 flex gap-3">
             <button onclick="eat('slot-noon')" class="flex-1 py-3 bg-blue-600 text-white rounded-2xl font-bold">食べた</button>
             <button onclick="resetSlot('slot-noon')" class="flex-1 py-3 bg-gray-500 text-white rounded-2xl font-bold">リセット</button>
           </div>
         </div>
-        
-        <div class="bg-white border-2 border-emerald-100 rounded-3xl p-5">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="text-3xl">🌙</span>
-            <span class="font-bold text-xl">夕</span>
-          </div>
+
+        <div class="border-2 border-emerald-100 rounded-3xl p-6">
+          <div class="flex items-center gap-3 mb-4"><span class="text-3xl">🌙</span><span class="font-bold text-xl">夕食</span></div>
           <div id="slot-evening" class="meal-slot border-2 border-dashed border-emerald-200 rounded-3xl p-4" 
-     ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></div>
-          <div class="flex gap-3 mt-4">
+               ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></div>
+          <div class="mt-4 flex gap-3">
             <button onclick="eat('slot-evening')" class="flex-1 py-3 bg-blue-600 text-white rounded-2xl font-bold">食べた</button>
             <button onclick="resetSlot('slot-evening')" class="flex-1 py-3 bg-gray-500 text-white rounded-2xl font-bold">リセット</button>
           </div>
         </div>
       </div>
+    </div>
+  </div>
 
-  <!-- 冷蔵庫・冷凍庫 -->
+  <!-- ページ下部の冷蔵庫・冷凍庫（2箇所目） -->
   <div class="max-w-7xl mx-auto p-4 mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div class="storage-box rounded-3xl p-5" class="-fridge">
+    <div class="storage-box rounded-3xl p-5" id="shared-fridge">
       <div class="font-bold text-sky-600 mb-3"><i class="fa-solid fa-box"></i> 冷蔵庫</div>
     </div>
-    <div class="storage-box rounded-3xl p-5" class="-freezer">
+    <div class="storage-box rounded-3xl p-5" id="shared-freezer">
       <div class="font-bold text-sky-600 mb-3"><i class="fa-solid fa-snowflake"></i> 冷凍庫</div>
     </div>
   </div>
 
- <script>
+  <script>
     let foodsDB = [];
     let currentDayIndex = 0;
     const days = ['月', '火', '水', '木', '金', '土', '日'];
@@ -149,15 +139,14 @@
       if (section === 'menu') initDayTabs();
     }
 
-    function addIngredientRow() {
+    function addIngredientRow() { /* ... 前回と同じ ... */ 
       const list = document.getElementById('ingredients-list');
       const id = Date.now();
       const row = document.createElement('div');
       row.className = "flex gap-3 items-end bg-gray-50 p-4 rounded-2xl relative";
       row.innerHTML = `
         <div class="flex-1">
-          <input type="text" id="name-${id}" placeholder="食品名 または 番号" 
-                 class="w-full border rounded-xl px-4 py-3" oninput="showSuggestions('${id}')">
+          <input type="text" id="name-${id}" placeholder="食品名 または 番号" class="w-full border rounded-xl px-4 py-3" oninput="showSuggestions('${id}')">
           <div id="suggestions-${id}" class="suggestions hidden"></div>
         </div>
         <input type="number" id="amount-${id}" value="100" class="w-28 border rounded-xl px-4 py-3 text-center" onchange="calculateNutrition()">
@@ -166,17 +155,15 @@
       list.appendChild(row);
     }
 
-    function showSuggestions(id) {
+    function showSuggestions(id) { /* ... 前回と同じ ... */ 
       const input = document.getElementById(`name-${id}`);
       const query = input.value.trim().toLowerCase();
       const div = document.getElementById(`suggestions-${id}`);
       if (query.length < 1) { div.classList.add('hidden'); return; }
-
       const matches = foodsDB.filter(f => 
         (f["食　品　名"] && f["食　品　名"].toLowerCase().includes(query)) ||
         (f["食品番号"] && f["食品番号"].includes(query))
       ).slice(0, 8);
-
       let html = '';
       matches.forEach(food => {
         html += `<div onclick="selectFood('${id}', '${food["食　品　名"]}')" class="px-4 py-2 hover:bg-gray-100 cursor-pointer">${food["食品番号"]} ${food["食　品　名"]}</div>`;
@@ -191,13 +178,11 @@
       calculateNutrition();
     }
 
-    function calculateNutrition() {
+    function calculateNutrition() { /* ... 前回と同じ ... */ 
       let total = {kcal:0, protein:0, fat:0, carb:0};
       document.querySelectorAll('#ingredients-list > div').forEach(row => {
-        const nameInput = row.querySelector('input[type="text"]');
-        const amountInput = row.querySelector('input[type="number"]');
-        const name = nameInput.value.trim();
-        const amount = parseFloat(amountInput.value) || 0;
+        const name = row.querySelector('input[type="text"]').value.trim();
+        const amount = parseFloat(row.querySelector('input[type="number"]').value) || 0;
         if (name && amount > 0) {
           const food = foodsDB.find(f => f["食　品　名"] === name || f["食品番号"] === name);
           if (food) {
@@ -209,13 +194,8 @@
           }
         }
       });
-
       const servings = parseInt(document.getElementById('servings').value) || 1;
-      total.kcal = total.kcal / servings;
-      total.protein = total.protein / servings;
-      total.fat = total.fat / servings;
-      total.carb = total.carb / servings;
-
+      total.kcal /= servings; total.protein /= servings; total.fat /= servings; total.carb /= servings;
       document.getElementById('nutrition-result').innerHTML = `
         <div>🔥 <b>${Math.round(total.kcal)}</b> kcal</div>
         <div>🥩 <b>${total.protein.toFixed(1)}</b> g</div>
@@ -224,10 +204,14 @@
       `;
     }
 
+    // 両方の冷蔵庫・冷凍庫にカードを追加
     function createRecipeCard(type) {
       const name = document.getElementById('recipe-name').value.trim() || "無名料理";
       const servings = parseInt(document.getElementById('servings').value) || 1;
-      const container = document.getElementById(type === 'fridge' ? 'shared-fridge' : 'shared-freezer');
+      const targets = [
+        document.getElementById(type === 'fridge' ? 'shared-fridge' : 'shared-freezer'),
+        document.getElementById(type === 'fridge' ? 'recipe-fridge' : 'recipe-freezer')
+      ];
 
       for (let i = 0; i < servings; i++) {
         const card = document.createElement('div');
@@ -246,32 +230,24 @@
         };
         card.ondragend = () => card.style.opacity = "1";
 
-        container.appendChild(card);
+        targets.forEach(target => {
+          if (target) target.appendChild(card.cloneNode(true));
+        });
       }
     }
 
-    function allowDrop(e) {
-      e.preventDefault();
-      e.currentTarget.classList.add('drag-over');
-    }
-
-    function dragLeave(e) {
-      e.currentTarget.classList.remove('drag-over');
-    }
+    function allowDrop(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+    function dragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
 
     function drop(e) {
       e.preventDefault();
       e.currentTarget.classList.remove('drag-over');
-
       const cardId = e.dataTransfer.getData("text/plain");
       const card = document.getElementById(cardId);
-
-      if (card) {
-        e.currentTarget.appendChild(card);
-      }
+      if (card) e.currentTarget.appendChild(card);
     }
 
-    function initDayTabs() {
+    function initDayTabs() { /* ... 省略（前回と同じ） ... */ 
       const container = document.getElementById('day-tabs');
       container.innerHTML = '';
       days.forEach((day, i) => {
@@ -289,8 +265,7 @@
     }
 
     function eat(slotId) {
-      const slot = document.getElementById(slotId);
-      slot.querySelectorAll('.food-card').forEach(card => card.remove());
+      document.getElementById(slotId).querySelectorAll('.food-card').forEach(c => c.remove());
     }
 
     function resetSlot(slotId) {
