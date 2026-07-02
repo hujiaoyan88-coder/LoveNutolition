@@ -53,7 +53,8 @@
       </div>
     </div>
     
-      <div class="max-w-7xl mx-auto p-4 mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+  <!-- 冷蔵庫・冷凍庫 -->
+  <div class="max-w-7xl mx-auto p-4 mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
     <div class="storage-box rounded-3xl p-5" id="shared-fridge">
       <div class="font-bold text-sky-600 mb-3"><i class="fa-solid fa-box"></i> 冷蔵庫</div>
     </div>
@@ -230,15 +231,13 @@
         card.className = `food-card bg-white border-2 border-sky-400 rounded-2xl p-4 mb-3 shadow cursor-move`;
         card.draggable = true;
         card.dataset.storage = type;
-        card.id = `card-${name}-${Date.now()}
-        `;
         card.innerHTML = `
           <div class="font-bold">${name}</div>
           <div class="text-xs text-sky-500">${servings}食分 (${i+1}/${servings})</div>
         `;
 
         card.ondragstart = (e) => {
-          e.dataTransfer.setData("text/plain", card.id);
+          e.dataTransfer.setData("text/html", card.innerHTML);
           setTimeout(() => card.style.opacity = "0.4", 100);
         };
         card.ondragend = () => card.style.opacity = "1";
@@ -256,7 +255,7 @@
       e.preventDefault();
       e.currentTarget.classList.remove('drag-over');
 
-      const cardId =e.dataTransfer.getData("text/plain");
+      const cardId =e.dataTransfer.getData("text/html");
       const card = document.getElementById(cardId);
         if (card) {e.currentTarget.appendChild(card);}
       }
