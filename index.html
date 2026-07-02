@@ -9,13 +9,12 @@
   <style>
     .food-card { transition: all 0.2s ease; user-select: none; }
     .food-card:active { transform: scale(0.95); }
-    .meal-slot { min-height: 130px; transition: background-color 0.2s; }
-    .meal-slot.drag-over { background-color: #dcfce7 !important; border-color: #22c55e !important; }
+    .meal-slot { min-height: 160px; transition: all 0.2s; }
+    .meal-slot.drag-over { background-color: #dcfce7 !important; border-color: #22c55e !important; scale: 1.02; }
     .section { display: none; }
     .section.active { display: block; }
     .day-tab.active { background-color: #166534; color: white; font-weight: 700; }
-    .storage-box { border: 3px solid #bae6fd; background: #f0f9ff; max-height: 320px; overflow-y: auto; }
-    .suggestions { max-height: 200px; overflow-y: auto; background: white; border: 1px solid #ddd; border-radius: 8px; position: absolute; z-index: 50; width: 100%; }
+    .storage-box { border: 3px solid #bae6fd; background: #f0f9ff; }
   </style>
 </head>
 <body class="bg-gray-50">
@@ -23,214 +22,58 @@
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold">🍽️ 栄養価計算 献立表</h1>
       <div class="flex gap-2">
-        <button onclick="showSection('recipe')" class="px-6 py-3 rounded-2xl font-bold bg-orange-500 text-white">🍳 料理作成</button>
-        <button onclick="showSection('menu')" class="px-6 py-3 rounded-2xl font-bold bg-emerald-600 text-white">📅 献立作成</button>
+        <button onclick="showSection('recipe')" class="px-6 py-3 rounded-2xl font-bold bg-orange-500 text-white hover:bg-orange-600">🍳 料理作成</button>
+        <button onclick="showSection('menu')" class="px-6 py-3 rounded-2xl font-bold bg-emerald-600 text-white hover:bg-emerald-700">📅 献立作成</button>
       </div>
     </div>
 
     <!-- 料理作成 -->
     <div id="recipe-section" class="section active bg-white rounded-3xl shadow p-8">
       <h2 class="text-2xl font-bold mb-6">🍳 料理作成</h2>
-      <input id="recipe-name" type="text" placeholder="料理名" class="w-full border-2 rounded-3xl px-6 py-4 text-xl mb-6">
+      <input id="recipe-name" type="text" placeholder="料理名を入力" 
+             class="w-full border-2 rounded-3xl px-6 py-4 text-xl mb-6">
+
       <div id="ingredients-list" class="space-y-4"></div>
-      <button onclick="addIngredientRow()" class="mt-4 px-6 py-3 bg-emerald-500 text-white rounded-2xl">+ 材料追加</button>
+      <button onclick="addIngredientRow()" 
+              class="mt-4 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl flex items-center gap-2">
+        <i class="fa-solid fa-plus"></i> 材料追加
+      </button>
 
       <div class="mt-8 bg-emerald-50 rounded-3xl p-6">
         <h3 class="font-bold mb-4">📊 栄養価（1食分）</h3>
-        <div id="nutrition-result" class="grid grid-cols-2 gap-4 text-lg"></div>
+        <div id="nutrition-result" class="grid grid-cols-2 md:grid-cols-4 gap-4 text-lg"></div>
       </div>
 
-      <div class="mt-8 flex gap-4">
-<div>
+      <div class="mt-8 flex gap-4 items-end">
+        <div>
           <label class="block font-bold mb-2">食数</label>
-          <input id="servings" type="number" value="1" min="1" class="w-28 border-2 border-gray-200 rounded-3xl px-6 py-4 text-2xl text-center">
+          <input id="servings" type="number" value="1" min="1" 
+                 class="w-28 border-2 border-gray-200 rounded-3xl px-6 py-4 text-2xl text-center">
         </div>
-        <button onclick="createRecipeCard('fridge')" class="flex-1 py-4 bg-sky-500 text-white font-bold rounded-3xl">❄️ 冷蔵庫</button>
-        <button onclick="createRecipeCard('freezer')" class="flex-1 py-4 bg-sky-500 text-white font-bold rounded-3xl">🧊 冷凍庫</button>
+        <button onclick="createRecipeCard('fridge')" 
+                class="flex-1 py-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-3xl">❄️ 冷蔵庫に保存</button>
+        <button onclick="createRecipeCard('freezer')" 
+                class="flex-1 py-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-3xl">🧊 冷凍庫に保存</button>
       </div>
     </div>
 
     <!-- 献立作成 -->
     <div id="menu-section" class="section bg-white rounded-3xl shadow p-8">
       <h2 class="text-2xl font-bold mb-6">📅 献立作成</h2>
-      <div class="flex gap-2 mb-6 overflow-x-auto" id="day-tabs"></div>
-      <div id="current-day-header" class="text-3xl font-bold text-emerald-700 mb-6">月</div>
-      <div class="grid grid-cols-3 gap-6">
+      <div class="flex gap-2 mb-6 overflow-x-auto pb-2" id="day-tabs"></div>
+      <div id="current-day-header" class="text-3xl font-bold text-emerald-700 mb-6"></div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- 朝 -->
         <div class="border-2 border-emerald-100 rounded-3xl p-6">
-          <div class="flex items-center gap-3 mb-4"><span class="text-3xl">☀️</span><span class="font-bold text-xl">朝</span></div>
-          <div id="slot-morning" class="meal-slot border-2 border-dashed border-emerald-200 rounded-3xl p-4"></div>
-          <div class="mt-4 flex gap-3">
-            <button onclick="eat('slot-morning')" class="flex-1 py-3 bg-blue-600 text-white rounded-2xl font-bold">食べた</button>
-            <button onclick="resetSlot('slot-morning')" class="flex-1 py-3 bg-gray-500 text-white rounded-2xl font-bold">リセット</button>
-          </div>
+          <div class="flex items-center gap-3 mb-4"><span class="text-3xl">☀️</span><span class="font-bold text-xl">朝食</span></div>
+          <div id="slot-morning" class="meal-slot border-2 border-dashed border-emerald-200 rounded-3xl p-4" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
         </div>
+        <!-- 昼 -->
         <div class="border-2 border-emerald-100 rounded-3xl p-6">
-          <div class="flex items-center gap-3 mb-4"><span class="text-3xl">🍱</span><span class="font-bold text-xl">昼</span></div>
-          <div id="slot-noon" class="meal-slot border-2 border-dashed border-emerald-200 rounded-3xl p-4"></div>
-          <div class="mt-4 flex gap-3">
-            <button onclick="eat('slot-noon')" class="flex-1 py-3 bg-blue-600 text-white rounded-2xl font-bold">食べた</button>
-            <button onclick="resetSlot('slot-noon')" class="flex-1 py-3 bg-gray-500 text-white rounded-2xl font-bold">リセット</button>
-          </div>
+          <div class="flex items-center gap-3 mb-4"><span class="text-3xl">🍱</span><span class="font-bold text-xl">昼食</span></div>
+          <div id="slot-noon" class="meal-slot border-2 border-dashed border-emerald-200 rounded-3xl p-4" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
         </div>
+        <!-- 夕 -->
         <div class="border-2 border-emerald-100 rounded-3xl p-6">
-          <div class="flex items-center gap-3 mb-4"><span class="text-3xl">🌙</span><span class="font-bold text-xl">夕</span></div>
-          <div id="slot-evening" class="meal-slot border-2 border-dashed border-emerald-200 rounded-3xl p-4"></div>
-          <div class="mt-4 flex gap-3">
-            <button onclick="eat('slot-evening')" class="flex-1 py-3 bg-blue-600 text-white rounded-2xl font-bold">食べた</button>
-            <button onclick="resetSlot('slot-evening')" class="flex-1 py-3 bg-gray-500 text-white rounded-2xl font-bold">リセット</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 冷蔵庫・冷凍庫 -->
-  <div class="max-w-7xl mx-auto p-4 mt-8 grid grid-cols-2 gap-6">
-    <div class="storage-box rounded-3xl p-5" id="shared-fridge">
-      <div class="font-bold text-sky-600 mb-3"><i class="fa-solid fa-box"></i> 冷蔵庫</div>
-    </div>
-    <div class="storage-box rounded-3xl p-5" id="shared-freezer">
-      <div class="font-bold text-sky-600 mb-3"><i class="fa-solid fa-snowflake"></i> 冷凍庫</div>
-    </div>
-  </div>
-
-  <script>
-    let foodsDB = [];
-    let currentDayIndex = 0;
-    const days = ['月', '火', '水', '木', '金', '土', '日'];
-
-    async function loadFoods() {
-      try {
-        const res = await fetch('foods.json');
-        foodsDB = await res.json();
-        console.log(`✅ ${foodsDB.length}件読み込み完了`);
-      } catch(e) {
-        console.error('foods.jsonが見つかりません');
-      }
-    }
-
-    function showSection(section) {
-      document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
-      document.getElementById(section + '-section').classList.add('active');
-      if (section === 'menu') initDayTabs();
-    }
-
-    function addIngredientRow() {
-      const list = document.getElementById('ingredients-list');
-      const id = Date.now();
-      const row = document.createElement('div');
-      row.className = "flex gap-3 items-end bg-gray-50 p-4 rounded-2xl relative";
-      row.innerHTML = `
-        <div class="flex-1">
-          <input type="text" id="name-${id}" placeholder="食品名 または 番号" 
-                 class="w-full border rounded-xl px-4 py-3" oninput="showSuggestions('${id}')">
-          <div id="suggestions-${id}" class="suggestions hidden"></div>
-        </div>
-        <input type="number" id="amount-${id}" value="100" class="w-28 border rounded-xl px-4 py-3 text-center" onchange="calculateNutrition()">
-        <button onclick="this.parentElement.remove();calculateNutrition()" class="text-red-500 px-4">削除</button>
-      `;
-      list.appendChild(row);
-    }
-
-    function showSuggestions(id) {
-      const input = document.getElementById(`name-${id}`);
-      const query = input.value.trim().toLowerCase();
-      const div = document.getElementById(`suggestions-${id}`);
-      if (query.length < 1) { div.classList.add('hidden'); return; }
-      const matches = foodsDB.filter(f => 
-        (f["食　品　名"] && f["食　品　名"].toLowerCase().includes(query)) ||
-        (f["食品番号"] && f["食品番号"].includes(query))
-      ).slice(0, 8);
-      let html = '';
-      matches.forEach(food => {
-        html += `<div onclick="selectFood('${id}', '${food["食　品　名"]}')" class="px-4 py-2 hover:bg-gray-100 cursor-pointer">${food["食品番号"]} ${food["食　品　名"]}</div>`;
-      });
-      div.innerHTML = html || '<div class="px-4 py-2 text-gray-500">見つかりません</div>';
-      div.classList.remove('hidden');
-    }
-
-    function selectFood(id, name) {
-      document.getElementById(`name-${id}`).value = name;
-      document.getElementById(`suggestions-${id}`).classList.add('hidden');
-      calculateNutrition();
-    }
-
-    function calculateNutrition() {
-      let total = {kcal:0, protein:0, fat:0, carb:0};
-      document.querySelectorAll('#ingredients-list > div').forEach(row => {
-        const nameInput = row.querySelector('input[type="text"]');
-        const amountInput = row.querySelector('input[type="number"]');
-        const name = nameInput.value.trim();
-        const amount = parseFloat(amountInput.value) || 0;
-        if (name && amount > 0) {
-          const food = foodsDB.find(f => f["食　品　名"] === name || f["食品番号"] === name);
-          if (food) {
-            const r = amount / 100;
-            total.kcal += parseFloat(food["エネルギー"] || 0) * r;
-            total.protein += parseFloat(food["たんぱく質"] || 0) * r;
-            total.fat += parseFloat(food["脂質"] || 0) * r;
-            total.carb += parseFloat(food["炭水化物"] || 0) * r;
-          }
-        }
-      });
-        const servings = parseInt(document.getElementById('servings').value) || 1;
-  
-  // 食数で割る（1食分にする）
-  total.kcal = total.kcal / servings;
-  total.protein = total.protein / servings;
-  total.fat = total.fat / servings;
-  total.carb = total.carb / servings;
-
-  document.getElementById('nutrition-result').innerHTML = `
-    <div>🔥 <b>${Math.round(total.kcal)}</b> kcal</div>
-    <div>🥩 <b>${total.protein.toFixed(1)}</b> g</div>
-    <div>🧈 <b>${total.fat.toFixed(1)}</b> g</div>
-    <div>🍚 <b>${total.carb.toFixed(1)}</b> g</div>
-  `;
-}
-
-    function createRecipeCard(type) {
-      const name = document.getElementById('recipe-name').value.trim() || "無名料理";
-      const container = document.getElementById(type === 'fridge' ? 'shared-fridge' : 'shared-freezer');
-      const card = document.createElement('div');
-      card.className = `food-card bg-white border border-sky-400 rounded-2xl p-4 mb-3 shadow cursor-move`;
-      card.draggable = true;
-      card.dataset.storage = type;
-      card.innerHTML = `<div class="font-bold">${name}</div>`;
-      container.appendChild(card);
-    }
-
-    function initDayTabs() {
-      const container = document.getElementById('day-tabs');
-      container.innerHTML = '';
-      days.forEach((day, i) => {
-        const btn = document.createElement('button');
-        btn.className = `day-tab px-6 py-2 rounded-3xl border whitespace-nowrap ${i === currentDayIndex ? 'active' : 'bg-white'}`;
-        btn.textContent = day;
-        btn.onclick = () => { currentDayIndex = i; document.getElementById('current-day-header').textContent = day; initDayTabs(); };
-        container.appendChild(btn);
-      });
-    }
-
-    function eat(slotId) {
-      document.getElementById(slotId).querySelectorAll('.food-card').forEach(c => c.remove());
-    }
-
-    function resetSlot(slotId) {
-      const slot = document.getElementById(slotId);
-      const fridge = document.getElementById('shared-fridge');
-      const freezer = document.getElementById('shared-freezer');
-      slot.querySelectorAll('.food-card').forEach(card => {
-        const target = card.dataset.storage === 'freezer' ? freezer : fridge;
-        target.appendChild(card);
-      });
-    }
-
-    window.onload = () => {
-      loadFoods();
-      addIngredientRow();
-      showSection('recipe');
-    };
-  </script>
-</body>
-</html>
+          <div class
