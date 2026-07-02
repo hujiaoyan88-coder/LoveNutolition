@@ -236,11 +236,14 @@
           <div class="text-xs text-sky-500">${servings}食分 (${i+1}/${servings})</div>
         `;
 
-        card.ondragstart = (e) => {
-          e.dataTransfer.setData("text/html", card.innerHTML);
-          setTimeout(() => card.style.opacity = "0.4", 100);
+        // 正しいドラッグ開始処理
+        card.ondragstart = function(e) {
+          e.dataTransfer.setData("text/html", card.outerHTML);
+          setTimeout(() => card.style.opacity = "0.4", 0);
         };
-        card.ondragend = () => card.style.opacity = "1";
+        card.ondragend = function() {
+          card.style.opacity = "1";
+        };
 
         container.appendChild(card);
       }
@@ -255,9 +258,20 @@
       e.preventDefault();
       e.currentTarget.classList.remove('drag-over');
 
-      const cardId =e.dataTransfer.getData("text/html");
-      const card = document.getElementById(cardId);
-        if (card) {e.currentTarget.appendChild(card);}
+      const data = e.dataTransfer.getData("text/html");
+      if (data) {
+        const temp = document.createElement('div');
+        temp.innerHTML = data;
+        const newCard = temp.firstElementChild;
+        if (newCard) {
+          // ドラッグ後のイベントを再設定
+          newCard.ondragstart = function(ev) {
+            ev.dataTransfer.setData("text/html", newCard.outerHTML);
+            setTimeout(() => newCard.style.opacity = "0.4", 0);
+          };
+          newCard.ondragend = function() { newCard.style.opacity = "1"; };
+          e.currentTarget.appendChild(newCard);
+        }
       }
     }
 
@@ -281,16 +295,14 @@
     // 食べたボタン
     function eat(slotId) {
       const slot = document.getElementById(slotId);
-      const cards = slot.querySelectorAll('.food-card');
-      cards.forEach(card => card.remove());
+      slot.querySelectorAll('.food-card').forEach(card => card.remove());
     }
 
     // リセットボタン（冷蔵庫に戻す）
     function resetSlot(slotId) {
       const slot = document.getElementById(slotId);
-      const fridge = document.getElementById('fridge');
+      const fridge = document.getElementById('shared-fridge');
       const cards = Array.from(slot.querySelectorAll('.food-card'));
-      
       cards.forEach(card => {
         fridge.appendChild(card);
       });
